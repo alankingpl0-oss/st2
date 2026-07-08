@@ -914,13 +914,11 @@ void drcirc(int p)
 }
 
 /* Rysuje celownik naprowadzający wokół planety docelowej */
+/* Rysuje celownik naprowadzający wokół planety docelowej */
 void draw_mission_target_indicator(int p)
 {
     /* Rysujemy tylko wtedy, gdy misja jest aktywna i to jest nasza planeta docelowa */
     if (!current_mission.is_active || p != current_mission.to_planet || grvflg) return;
-
-    /* Używamy globalnego stanu timera gry 'show' do uzyskania efektu migania (co 1 sekundy) */
-    if (!show) return;
 
     /* Obliczamy współrzędne ekranowe dokładnie tak samo jak w displa() */
     double f = absy * stheta + absx * ctheta;
@@ -928,18 +926,26 @@ void draw_mission_target_indicator(int p)
     
     int res_y = inscr(target_spy);
     if (res_y) {
-        if (!inflg) rotx();
+        /* Zapisujemy i odtwarzamy stan rotacji, żeby nie zepsuć koncertowo rysowania koła */
+        double stara_spx = spx;
+        rotx();
         int res_x = inscr(spx);
+        
         if (res_x) {
-            /* Zabezpieczamy jasność - maksymalna jasność dla celownika */
+            /* Wymuszamy najjaśniejszy kolor rysowania linii */
             intens(br3);
             
-            /* Rysujemy wektory krzyżyka wokół środka planety */
-            /* Kreska w lewo i prawo */
-            dsetx(895 + res_x - 15); dsety(1023 + res_y); vecx(30);
-            /* Kreska w górę i dół */
-            dsetx(895 + res_x); dsety(1023 + res_y - 15); vecy(30);
+            /* Kreska pozioma (lewo-prawo) o długości 40 jednostek */
+            dsetx(895 + res_x - 20); 
+            dsety(1023 + res_y); 
+            vecx(40);
+            
+            /* Kreska pionowa (góra-dół) o długości 40 jednostek */
+            dsetx(895 + res_x); 
+            dsety(1023 + res_y - 20); 
+            vecy(40);
         }
+        spx = stara_spx; /* Przywracamy stary stan układu współrzędnych */
     }
 }
 
