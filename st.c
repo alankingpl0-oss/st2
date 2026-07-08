@@ -913,6 +913,52 @@ void drcirc(int p)
 	surf(narcs, setx, sety, wx, wy, -v, vv);
 }
 
+
+/* Rysuje etykietę tekstową nad wybranymi planetami ze zlecenia */
+void draw_planet_mission_label(int p)
+{
+    /* Sprawdzamy, czy misja jest aktywna i czy planeta to cel LUB start */
+    if (!current_mission.is_active) return;
+    if (p != current_mission.to_planet && p != current_mission.from_planet) return;
+    if (grvflg) return; /* Jeśli planeta jest poza zasięgiem rysowania */
+
+    /* Obliczamy pozycję Y na ekranie */
+    double f = absy * stheta + absx * ctheta;
+    double label_spy = scale > 0 ? f / (1<<scale) : f * (1<<-scale);
+    
+    int res_y = inscr(label_spy);
+    if (res_y) {
+        /* Zapisujemy globalny stan spx, aby rotx() go nie nadpisał na stałe */
+        double stara_spx = spx;
+        rotx();
+        int res_x = inscr(spx);
+        
+        if (res_x) {
+            /* Przygotowanie rysika do tekstu */
+            dscale(0);     /* Standardowa wielkość czcionki */
+            intens(br3);   /* Maksymalna jasność napisu */
+            blink(false);  /* Stabilny napis bez mrugania */
+            
+            /* Ustawiamy pozycję: res_x centruje, res_y unosi tekst lekko nad planetę */
+            /* Przesunięcie o -30 w X centruje mniej więcej krótkie nazwy */
+            dsetx(895 + res_x - 30); 
+            dsety(1023 + res_y + 25); 
+            
+            /* Wypisujemy nazwę z tablicy names[] */
+            chars(names[p]);
+            
+            /* Jeśli to planeta docelowa, możemy dopisać mały znacznik [CEL] */
+            if (p == current_mission.to_planet) {
+                dsetx(895 + res_x - 25);
+                dsety(1023 + res_y + 10);
+                chars("*CEL*");
+            }
+        }
+        spx = stara_spx; /* Przywracamy oryginalny stan układu */
+    }
+}
+
+
 /* Rysuje celownik naprowadzający wokół planety docelowej */
 /* Rysuje celownik naprowadzający wokół planety docelowej */
 void draw_mission_target_indicator(int p)
@@ -978,9 +1024,13 @@ void displa(int p)
 	}
 	drcirc(p);
 
-	/* DOKLEJ TO TUTAJ: Rysowanie wskaźnika misji */
+	/* Stary wskaźnik wektorowy */
 	draw_mission_target_indicator(p);
+
+	/* DOKLEJ TO TUTAJ: Dynamiczny tekst nad planetami */
+	draw_planet_mission_label(p);
 }
+
 
 
 /* Update ship thrust acceleration and position */
