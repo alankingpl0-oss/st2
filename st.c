@@ -915,12 +915,28 @@ void drcirc(int p)
 
 
 /* Rysuje etykietę tekstową nad wybranymi planetami ze zlecenia */
+/* Rysuje etykietę tekstową nad wybranymi planetami ze zlecenia (widoczną z daleka) */
+
+
+/* Rysuje etykietę tekstową nad wybranymi planetami ze zlecenia */
 void draw_planet_mission_label(int p)
 {
     /* Sprawdzamy, czy misja jest aktywna i czy planeta to cel LUB start */
     if (!current_mission.is_active) return;
     if (p != current_mission.to_planet && p != current_mission.from_planet) return;
-    if (grvflg) return; /* Jeśli planeta jest poza zasięgiem rysowania */
+    
+    /* 
+       USUNIĘTO: if (grvflg) return; 
+       Dzięki temu nazwa nie znika po przeleceniu kilku milionów kilometrów.
+       Musimy jednak sami przeliczyć pozycję absolutną planety (absxy), 
+       ponieważ dla dalekich ciał updacc mogło nie zaktualizować absx/absy.
+    */
+    double stara_absx = absx;
+    double stara_absy = absy;
+    
+    absxy(p);
+    absx += shipx;
+    absy += shipy;
 
     /* Obliczamy pozycję Y na ekranie */
     double f = absy * stheta + absx * ctheta;
@@ -956,7 +972,12 @@ void draw_planet_mission_label(int p)
         }
         spx = stara_spx; /* Przywracamy oryginalny stan układu */
     }
+    
+    /* Przywracamy stan absx/absy dla reszty potoku renderującego displa() */
+    absx = stara_absx;
+    absy = stara_absy;
 }
+
 
 
 /* Rysuje celownik naprowadzający wokół planety docelowej */
