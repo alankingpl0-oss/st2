@@ -377,6 +377,7 @@ SDL_Renderer *renderer = NULL;
 #define min(a,b) ((a) < (b) ? (a) : (b))
 
 /* Funkcja generująca nowe losowe zlecenie */
+/* Funkcja generująca nowe losowe zlecenie z wykluczeniem słońca i małych księżyców */
 void generate_random_mission(int current_planet) {
     static const char *cargo_types[] = {
         "Niebezpieczny ladunek",
@@ -384,12 +385,18 @@ void generate_random_mission(int current_planet) {
         "Zapasy lukrecji", /* Coś dla smaku */
         "Paliwo nuklearne"
     };
+    
+    /* Indeksy bezpiecznych ciał z tablicy names[]: 
+       1 - Ziemia, 4 - Ksiezyc, 13 - jupiter, 14 - mars, 15 - mercury, 25 - saturn */
+    static const int valid_planets[] = {1, 4, 13, 14, 15, 25};
+    const int num_valid = 6;
 
     current_mission.from_planet = current_planet;
     
-    /* Losujemy planetę docelową inną niż obecna (indeksy 0-31) */
+    /* Losujemy planetę docelową tylko z dozwolonej listy */
     do {
-        current_mission.to_planet = rand() % 32;
+        int random_index = rand() % num_valid;
+        current_mission.to_planet = valid_planets[random_index];
     } while (current_mission.to_planet == current_mission.from_planet);
 
     current_mission.cargo = cargo_types[rand() % 4];
