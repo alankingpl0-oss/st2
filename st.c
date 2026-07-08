@@ -362,22 +362,21 @@ SDL_Renderer *renderer = NULL;
 #define max(a,b) ((a) > (b) ? (a) : (b))
 #define min(a,b) ((a) < (b) ? (a) : (b))
 
+/* Zmiana mapowania współrzędnych wektora na pełny rozmiar okna */
 void dsetx(int x)
 {
-	// ensure planet name is in view
-	x -= x < 127 ? min(512, window_width/(2*wscale)) : 512;
+	x -= x < 127 ? min(512, window_width/(2*wscale)) : window_width/(2*wscale);
 	xpos = x;
 }
 
 void dsety(int y)
 {
 	y -= y < 250 ?
-		// ensure info is in view
 		min(512, window_height/(2*wscale)) :
-		// ensure main view is in view
-		max(512, 1024 - window_height/(2*wscale));
+		max(512, window_height/wscale - window_height/(2*wscale));
 	ypos = y;
 }
+
 
 void dscale(int s) {
 	sz = 1<<s;
