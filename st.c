@@ -289,6 +289,20 @@ const struct flt pww_[] = {
 	{-052,0754612,0304722}
 };
 
+/* Struktura reprezentująca pojedyncze zlecenie */
+struct Mission {
+    int from_planet;       /* Indeks planety startowej */
+    int to_planet;         /* Indeks planety docelowej */
+    const char *cargo;     /* Nazwa ładunku */
+    bool is_active;        /* Czy misja jest w trakcie realizacji */
+    bool is_completed;     /* Czy misja została ukończona */
+};
+
+/* Globalne zmienne stanu kariery */
+struct Mission current_mission = {0};
+int player_credits = 0;    /* Punkty/kredyty za wykonane zadania */
+
+
 double flt2float(struct flt flt)
 {
 	char a = flt.exp;
@@ -362,21 +376,44 @@ SDL_Renderer *renderer = NULL;
 #define max(a,b) ((a) > (b) ? (a) : (b))
 #define min(a,b) ((a) < (b) ? (a) : (b))
 
-/* Zmiana mapowania współrzędnych wektora na pełny rozmiar okna */
+/* Funkcja generująca nowe losowe zlecenie */
+void generate_random_mission(int current_planet) {
+    static const char *cargo_types[] = {
+        "Niebezpieczny ladunek",
+        "Tajna technologie",
+        "Zapasy lukrecji", /* Coś dla smaku */
+        "Paliwo nuklearne"
+    };
+
+    current_mission.from_planet = current_planet;
+    
+    /* Losujemy planetę docelową inną niż obecna (indeksy 0-31) */
+    do {
+        current_mission.to_planet = rand() % 32;
+    } while (current_mission.to_planet == current_mission.from_planet);
+
+    current_mission.cargo = cargo_types[rand() % 4];
+    current_mission.is_active = true;
+    current_mission.is_completed = false;
+}
+
+
 void dsetx(int x)
 {
-	x -= x < 127 ? min(512, window_width/(2*wscale)) : window_width/(2*wscale);
+	// ensure planet name is in view
+	x -= x < 127 ? min(512, window_width/(2*wscale)) : 512;
 	xpos = x;
 }
 
 void dsety(int y)
 {
 	y -= y < 250 ?
+		// ensure info is in view
 		min(512, window_height/(2*wscale)) :
-		max(512, window_height/wscale - window_height/(2*wscale));
+		// ensure main view is in view
+		max(512, 1024 - window_height/(2*wscale));
 	ypos = y;
 }
-
 
 void dscale(int s) {
 	sz = 1<<s;
@@ -615,6 +652,38 @@ void displist(void)
     
     intens(0);
     blink(false);
+/* Sekcja rysowania statusu kariery */
+    intens(1);
+    blink(false);
+    
+    if (current_mission.is_active) {
+        dsetx(20);
+        dsety(900);
+        chars("ZLECENIE: ");
+        chars(current_mission.cargo);
+        
+        dsetx(20);
+        dsety(860);
+        chars("CEL: ");
+        chars(names[current_mission.to_planet]);
+    } else if (current_mission.is_completed) {
+        dsetx(20);
+        dsety(900);
+        chars("MISJA UKONCZONA! +100 KREDYTOW");
+        /* Opcjonalnie: wyczyść status po chwili lub przy starcie */
+    } else {
+        dsetx(20);
+        dsety(900);
+        chars("BRAK ZLECEN. WYLADUJ GDZIES.");
+    }
+    
+    /* Wyświetlanie stanu konta */
+    char cred_str[32];
+    snprintf(cred_str, sizeof(cred_str), "KREDYTY: %d", player_credits);
+    dsetx(20);
+    dsety(820);
+    chars(cred_str);
+
     dsetx(0);
     dsety(20);
     namedsp();
@@ -709,7 +778,23 @@ void updacc(int p)
 #endif
 			}
 			lanflg = true;
-			ftmp1 = rpar / dpar;
+ftmp1 = rpar / dpar;
+
+/* LOGIKA KARIERY: Sprawdzamy stan misji po bezpiecznym wylądowaniu na planecie 'p' */
+if (!crflg) { /* Tylko jeśli nie było kraksy */
+    if (current_mission.is_active) {
+        if (p == current_mission.to_planet) {
+            current_mission.is_active = false;
+            current_mission.is_completed = true;
+            player_credits += 100; /* Nagroda */
+        }
+    } else {
+        /* Jeśli nie mamy misji, dostajemy nową na planecie, na której wylądowaliśmy */
+        generate_random_mission(p);
+    }
+}
+
+
 			// reset x and y to the edge of the planet
 			x *= ftmp1;
 			ox = x;
@@ -1042,6 +1127,10 @@ int main(void)
 	pbson = SDL_GetKeyboardState(NULL);
 
 #ifdef __EMSCRIPTEN__
+/* Wewnątrz int main(void) przed emscripten_set_main_loop / pętlą while */
+srand(SDL_GetTicks()); /* Inicjalizacja seeda */
+generate_random_mission(par); /* Pierwsza misja z Ziemi */
+
 	emscripten_set_main_loop(main_loop, 0, true);
 #else
 	while (true) {
