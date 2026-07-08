@@ -784,19 +784,21 @@ void updacc(int p)
 				EM_ASM(Module.oncrash());
 #endif
 			}
-			lanflg = true;
+lanflg = true;
 ftmp1 = rpar / dpar;
 
 /* LOGIKA KARIERY: Sprawdzamy stan misji po bezpiecznym wylądowaniu na planecie 'p' */
 if (!crflg) { /* Tylko jeśli nie było kraksy */
-    if (current_mission.is_active) {
-        if (p == current_mission.to_planet) {
-            current_mission.is_active = false;
-            current_mission.is_completed = true;
-            player_credits += 100; /* Nagroda */
-        }
-    } else {
-        /* Jeśli nie mamy misji, dostajemy nową na planecie, na której wylądowaliśmy */
+    if (current_mission.is_active && p == current_mission.to_planet) {
+        /* Sukces! Dostarczono ładunek */
+        current_mission.is_active = false;
+        current_mission.is_completed = true;
+        player_credits += 100; /* Nagroda za wykonanie zadania */
+        
+        /* Natychmiast generujemy kolejne zlecenie z tej planety w nowe miejsce */
+        generate_random_mission(p);
+    } else if (!current_mission.is_active) {
+        /* Zabezpieczenie: jeśli z jakiegoś powodu gracz wylądował bez misji, dajemy nową */
         generate_random_mission(p);
     }
 }
@@ -911,6 +913,37 @@ void drcirc(int p)
 	surf(narcs, setx, sety, wx, wy, -v, vv);
 }
 
+/* Rysuje celownik naprowadzający wokół planety docelowej */
+void draw_mission_target_indicator(int p)
+{
+    /* Rysujemy tylko wtedy, gdy misja jest aktywna i to jest nasza planeta docelowa */
+    if (!current_mission.is_active || p != current_mission.to_planet || grvflg) return;
+
+    /* Używamy globalnego stanu timera gry 'show' do uzyskania efektu migania (co 1 sekundy) */
+    if (!show) return;
+
+    /* Obliczamy współrzędne ekranowe dokładnie tak samo jak w displa() */
+    double f = absy * stheta + absx * ctheta;
+    double target_spy = scale > 0 ? f / (1<<scale) : f * (1<<-scale);
+    
+    int res_y = inscr(target_spy);
+    if (res_y) {
+        if (!inflg) rotx();
+        int res_x = inscr(spx);
+        if (res_x) {
+            /* Zabezpieczamy jasność - maksymalna jasność dla celownika */
+            intens(br3);
+            
+            /* Rysujemy wektory krzyżyka wokół środka planety */
+            /* Kreska w lewo i prawo */
+            dsetx(895 + res_x - 15); dsety(1023 + res_y); vecx(30);
+            /* Kreska w górę i dół */
+            dsetx(895 + res_x); dsety(1023 + res_y - 15); vecy(30);
+        }
+    }
+}
+
+
 /* Display planet */
 void displa(int p)
 {
@@ -938,7 +971,11 @@ void displa(int p)
 		}
 	}
 	drcirc(p);
+
+	/* DOKLEJ TO TUTAJ: Rysowanie wskaźnika misji */
+	draw_mission_target_indicator(p);
 }
+
 
 /* Update ship thrust acceleration and position */
 void updshp(void)
