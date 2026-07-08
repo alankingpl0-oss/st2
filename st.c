@@ -7,15 +7,17 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
+#define ST_VERSION_STR "0.01"
+
 
 #include "font.h"
 
 const char *names[] = {
-	"sun",
-	"earth",
+	"Slonce",
+	"Ziemia",
 	"ariel",
-	"callisto",
-	"moon",
+	"Kalisto",
+	"Ksiezyc",
 	"deimos",
 	"dione",
 	"enceladus",
@@ -525,6 +527,7 @@ const bool *pbson;
 
 void contrl(const SDL_Event *e)
 {
+	/* Obsługa zdarzeń jednorazowych (kliknięcie klawisza) */
 	if (e) {
 		switch (e->type) {
 		case SDL_EVENT_KEY_DOWN:
@@ -535,31 +538,45 @@ void contrl(const SDL_Event *e)
 			case SDLK_2:
 				goflg = crflg = false;
 				break;
-			case SDLK_7: case SDLK_DOWN:
+			/* Zmiana skali pod Q i E lub tradycyjnie strzałkami */
+			case SDLK_E: case SDLK_7: case SDLK_DOWN:
 				++scale;
 				dspsca();
 				break;
-			case SDLK_8: case SDLK_UP:
+			case SDLK_Q: case SDLK_8: case SDLK_UP:
 				--scale;
 				dspsca();
 				break;
 			}
 		}
 	}
+
+	/* Obsługa sterowania ciągłego (trzymanie klawiszy) */
 	forflg = bacflg = false;
-	if (pbson[SDL_SCANCODE_3]) {
+	
+	/* W - Ruch do przodu */
+	if (pbson[SDL_SCANCODE_W] || pbson[SDL_SCANCODE_3]) {
 		forflg = true;
 		if (!goflg) lanflg = false;
 	}
-	if (pbson[SDL_SCANCODE_4]) {
+	
+	/* S - Ruch do tyłu */
+	if (pbson[SDL_SCANCODE_S] || pbson[SDL_SCANCODE_4]) {
 		bacflg = true;
 		if (!goflg) lanflg = false;
 	}
-	if (pbson[SDL_SCANCODE_5] || pbson[SDL_SCANCODE_RIGHT])
+	
+	/* D - Obrót w prawo */
+	if (pbson[SDL_SCANCODE_D] || pbson[SDL_SCANCODE_5] || pbson[SDL_SCANCODE_RIGHT]) {
 		rotate(false);
-	if (pbson[SDL_SCANCODE_6] || pbson[SDL_SCANCODE_LEFT])
+	}
+	
+	/* A - Obrót w lewo */
+	if (pbson[SDL_SCANCODE_A] || pbson[SDL_SCANCODE_6] || pbson[SDL_SCANCODE_LEFT]) {
 		rotate(true);
+	}
 }
+
 
 void dsplanet(int p)
 {
@@ -583,20 +600,28 @@ void namedsp(void)
 
 void displist(void)
 {
-	dscale(1);
-	intens(3);
-	blink(true);
-	dsetx(800);
-	dsety(20);
-	dispcl();
-	intens(0);
-	blink(false);
-	dsetx(0);
-	dsety(20);
-	namedsp();
-	dsetx(400);
-	dsety(20);
-	dssca();
+    dscale(1);
+    intens(3);
+    blink(true);
+    dsetx(800);
+    dsety(20);
+    dispcl();
+    
+    // Rysowanie wersji w rogu ekranu
+    intens(0);
+    blink(false);
+    dsetx(10); // Ustawienie w lewym górnym rogu
+    dsety(50);
+    chars("v" ST_VERSION_STR); // Użycie zdefiniowanego wcześniej makra
+    
+    intens(0);
+    blink(false);
+    dsetx(0);
+    dsety(20);
+    namedsp();
+    dsetx(400);
+    dsety(20);
+    dssca();
 }
 
 /* Update planet position */
