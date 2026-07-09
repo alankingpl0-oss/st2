@@ -7,7 +7,7 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
-#define ST_VERSION_STR "0.02"
+#define ST_VERSION_STR "0.02a"
 
 
 #include "font.h"
@@ -404,7 +404,7 @@ void generate_random_mission(int current_planet) {
 
     /* Indeksy bezpiecznych ciał z tablicy names[]: 
        1 - Ziemia, 4 - Ksiezyc, 13 - jupiter, 14 - mars, 15 - mercury, 25 - saturn */
-    static const int valid_planets[] = {1, 4, 13, 14, 15, 16, 18, 23, 25, 30, 31};
+    static const int valid_planets[] = {1, 4, 13, 14, 15, 18, 23, 25, 30, 31}; /* Musimy wywalić Mimasa :( Kiedyś go naprawię */
     const int num_valid = 6;
 
     current_mission.from_planet = current_planet;
