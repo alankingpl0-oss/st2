@@ -380,9 +380,9 @@ SDL_Renderer *renderer = NULL;
 /* Funkcja generująca nowe losowe zlecenie z wykluczeniem słońca i małych księżyców */
 void generate_random_mission(int current_planet) {
     static const char *cargo_types[] = {
-        "Niebezpieczny ladunek",
+   /*     "Niebezpieczny ladunek",
         "Tajna technologia",
-        "Zapasy lukrecji", /* Coś dla smaku */
+        "Zapasy lukrecji", */ /* Coś dla smaku */
         "Paliwo nuklearne", /* Żeby nikt o tym nie oslyszał... */
         "Jablka",          /* Pyszności z Ziemi */
         "Cukierki!",       /* Słodycze... */
