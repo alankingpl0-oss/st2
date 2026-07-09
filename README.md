@@ -1,5 +1,9 @@
-# Space Travel
+# MSKI26
 
+**Maksoft Symulator Kuriera Interplanetarnego 2026** to nowoczesna odsłona klasycznej gry Space Travel z 1969 roku. MSKI26 działa w przeglądarce.
+
+## Ste
+<!--
 This is a C port of Ken Thompson's
 [Space Travel](https://en.wikipedia.org/wiki/Space_Travel_\(video_game\)),
 ported from PDP-7 assembly. The original source files are in `src/cmd/st*.s`
@@ -53,7 +57,7 @@ You can also use the arrow keys for yaw and scale.
 > *[Space Travel: Exploring the solar system and the
 > PDP-7](https://www.bell-labs.com/usr/dmr/www/spacetravel.html) by Dennis
 > Ritchie*
-
+-->
 The current dominating attractor, scale, and landing status (L/CL for
 landed/crash landed) are displayed at the bottom. The moving dot on the line
 below the main view represents the horizontal velocity relative to the current
