@@ -7,44 +7,44 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
-#define ST_VERSION_STR "0.01"
+#define ST_VERSION_STR "0.02"
 
 
 #include "font.h"
 
 const char *names[] = {
-	"Slonce",
-	"Ziemia",
-	"ariel",
-	"Kalisto",
-	"Ksiezyc",
-	"deimos",
-	"dione",
-	"enceladus",
-	"europa",
-	"ganymede",
-	"hyperion",
-	"iapetus",
-	"io",
-	"jupiter",
-	"mars",
-	"mercury",
+	"Slonce", /* 0 */
+	"Ziemia", /* 1 */
+	"ariel",  /* 2 */
+	"Kalisto", /*3*/
+	"Ksiezyc", /* 4 *
+	"deimos", /* 5 */
+	"dione",  //6
+	"enceladus", //7
+	"Europa", //8
+	"ganymede", //9
+	"hyperion", //10
+	"iapetus", //11
+	"io", //12
+	"jupiter", //13
+	"mars", //14
+	"mercury", //15
 	"mimas",
 	"miranda",
 	"neptune",
 	"nereid",
-	"oberon",
+	"oberon", //20
 	"phobos",
 	"phoebe",
 	"pluto",
 	"rhea",
-	"saturn",
+	"saturn", //25
 	"tethys",
 	"titan",
 	"triton",
 	"umbriel",
-	"uranus",
-	"venus"
+	"Uran",  //30
+	"Wenus"  //31
 };
 
 enum bri { br0, br1, br2, br3 };
@@ -381,14 +381,30 @@ SDL_Renderer *renderer = NULL;
 void generate_random_mission(int current_planet) {
     static const char *cargo_types[] = {
         "Niebezpieczny ladunek",
-        "Tajna technologie",
+        "Tajna technologia",
         "Zapasy lukrecji", /* Coś dla smaku */
-        "Paliwo nuklearne"
+        "Paliwo nuklearne", /* Żeby nikt o tym nie oslyszał... */
+        "Jablka",          /* Pyszności z Ziemi */
+        "Cukierki!",       /* Słodycze... */
+        "Gruszki",         /* Może rosną na Jowiszu?? */
+        "Smieci",          /* Eh... */
+        "Pingwiny",        /* Zaraz... co?! */
+        "Pokarm dla pingwinow", /* Trzeba je czyms karmic */
+        "Ryby",            /* Czyli naturalny pokarm dla pingów */
+        "Ropa naftowa",    /* Dla agregatów */
+        "Agregaty",        /* Mamy paliwo, to teraz mamy agregaty!! */
+        "Benzyna",         /* Dla agregatów-benzyniaków */
+        "Budulec",         /* Do bazy */
+        "Sprzet",          /* Jakis sprzet */
+        "Zlom"             /* Tak jak smieci */
     };
     
+
+/* ==================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================== */
+
     /* Indeksy bezpiecznych ciał z tablicy names[]: 
        1 - Ziemia, 4 - Ksiezyc, 13 - jupiter, 14 - mars, 15 - mercury, 25 - saturn */
-    static const int valid_planets[] = {1, 4, 13, 14, 15, 25};
+    static const int valid_planets[] = {1, 4, 13, 14, 15, 16, 18, 23, 25, 30, 31};
     const int num_valid = 6;
 
     current_mission.from_planet = current_planet;
@@ -598,14 +614,14 @@ void contrl(const SDL_Event *e)
 	forflg = bacflg = false;
 	
 	/* W - Ruch do przodu */
-	if (pbson[SDL_SCANCODE_W] || pbson[SDL_SCANCODE_3]) {
-		forflg = true; /* Naprawione: teraz W aktywuje ruch do przodu */
+	if (pbson[SDL_SCANCODE_S] || pbson[SDL_SCANCODE_3]) {
+		forflg = true;
 		if (!goflg) lanflg = false;
 	}
 	
 	/* S - Ruch do tyłu */
-	if (pbson[SDL_SCANCODE_S] || pbson[SDL_SCANCODE_4]) {
-		bacflg = true; /* Naprawione: teraz S aktywuje ruch do tyłu */
+	if (pbson[SDL_SCANCODE_W] || pbson[SDL_SCANCODE_4]) {
+		bacflg = true;
 		if (!goflg) lanflg = false;
 	}
 	
@@ -618,6 +634,13 @@ void contrl(const SDL_Event *e)
 	if (pbson[SDL_SCANCODE_A] || pbson[SDL_SCANCODE_6] || pbson[SDL_SCANCODE_LEFT]) {
 		rotate(true);
 	}
+
+/* X - Natychmiastowe wyzerowanie prędkości */
+	if (pbson[SDL_SCANCODE_X]) {
+		ox = x;
+		oy = y;
+	}
+
 }
 
 void dsplanet(int p)
