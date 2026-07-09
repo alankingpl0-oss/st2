@@ -384,6 +384,7 @@ SDL_Renderer *renderer = NULL;
 /* Funkcja generująca nowe losowe zlecenie z wykluczeniem słońca i małych księżyców
 
 /* Funkcja generująca nowe losowe zlecenie z inteligentnym filtrem powtórzeń */
+/* Funkcja generująca nowe losowe zlecenie z inteligentnym filtrem powtórzeń */
 void generate_random_mission(int current_planet) {
     static const char *cargo_types[] = {
         "Paliwo nuklearne",
@@ -407,7 +408,7 @@ void generate_random_mission(int current_planet) {
        1 - Ziemia, 4 - Ksiezyc, 13 - jupiter, 14 - mars, 15 - mercury, 
        18 - neptune, 23 - pluto, 25 - saturn, 30 - Uran, 31 - Wenus */
     static const int valid_planets[] = {1, 4, 13, 14, 15, 18, 23, 25, 30, 31};
-    const int num_valid = 10; /* POPRAWKA: Teraz uwzględniamy wszystkie 10 planet z listy! */
+    const int num_valid = 10; /* Uwzględniamy wszystkie 10 planet z listy! */
 
     current_mission.from_planet = current_planet;
     
@@ -424,7 +425,7 @@ void generate_random_mission(int current_planet) {
     /* 2. Inteligentne losowanie towaru (żeby nie było gruszki 5 razy z rzędu) */
     int cargo_idx;
     do {
-        cargo_idx = rand() % num_cargo; /* POPRAWKA: Losujemy z pełnej puli 14 towarów */
+        cargo_idx = rand() % num_cargo; /* Losujemy z pełnej puli 14 towarów */
     } while (cargo_idx == last_cargo_index);
     
     /* Zapisujemy do historii towarów */
@@ -434,45 +435,6 @@ void generate_random_mission(int current_planet) {
     current_mission.is_active = true;
     current_mission.is_completed = false;
 }
- //       "Tajna technologia",
- //       "Zapasy lukrecji", */ /* Coś dla smaku */
-        "Paliwo nuklearne", /* Żeby nikt o tym nie oslyszał... */
-  //      "Jablka",          /* Pyszności z Ziemi */
- //       "Cukierki!",       /* Słodycze... */
- //       "Gruszki",         /* Może rosną na Jowiszu?? */
- //       "Smieci",          /* Eh... */
- //       "Pingwiny",        /* Zaraz... co?! */
- //       "Pokarm dla pingwinow", /* Trzeba je czyms karmic */
- //       "Ryby",            /* Czyli naturalny pokarm dla pingów */
- //       "Ropa naftowa",    /* Dla agregatów */
- //       "Agregaty",        /* Mamy paliwo, to teraz mamy agregaty!! */
- //       "Benzyna",         /* Dla agregatów-benzyniaków */
- //       "Budulec",         /* Do bazy */
- //       "Sprzet",          /* Jakis sprzet */
- //       "Zlom"             /* Tak jak smieci */
-    };
-    
-
-/* ==================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================== */
-
-    /* Indeksy bezpiecznych ciał z tablicy names[]: 
-       1 - Ziemia, 4 - Ksiezyc, 13 - jupiter, 14 - mars, 15 - mercury, 25 - saturn */
-    static const int valid_planets[] = {1, 4, 13, 14, 15, 18, 23, 25, 30, 31}; /* Musimy wywalić Mimasa :( Kiedyś go naprawię */
-    const int num_valid = 6;
-
-    current_mission.from_planet = current_planet;
-    
-    /* Losujemy planetę docelową tylko z dozwolonej listy */
-    do {
-        int random_index = rand() % num_valid;
-        current_mission.to_planet = valid_planets[random_index];
-    } while (current_mission.to_planet == current_mission.from_planet);
-
-    current_mission.cargo = cargo_types[rand() % 4];
-    current_mission.is_active = true;
-    current_mission.is_completed = false;
-}
-
 
 void dsetx(int x)
 {
