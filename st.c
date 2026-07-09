@@ -599,13 +599,13 @@ void contrl(const SDL_Event *e)
 	
 	/* W - Ruch do przodu */
 	if (pbson[SDL_SCANCODE_W] || pbson[SDL_SCANCODE_3]) {
-		forflg = true;
+		forflg = true; /* Naprawione: teraz W aktywuje ruch do przodu */
 		if (!goflg) lanflg = false;
 	}
 	
 	/* S - Ruch do tyłu */
 	if (pbson[SDL_SCANCODE_S] || pbson[SDL_SCANCODE_4]) {
-		bacflg = true;
+		bacflg = true; /* Naprawione: teraz S aktywuje ruch do tyłu */
 		if (!goflg) lanflg = false;
 	}
 	
@@ -619,7 +619,6 @@ void contrl(const SDL_Event *e)
 		rotate(true);
 	}
 }
-
 
 void dsplanet(int p)
 {
