@@ -1,9 +1,44 @@
 # MSKI26
 
+<a href="http://www.maksoft.kolejopedia.pl/st/html">
+  <img src="https://img.shields.io/badge/Graj-PowerKilo--blue?style=plastic&icon=github" width="200" alt="Pobierz">
+</a>
+
+<br></br>
+
+---
+
 **Maksoft Symulator Kuriera Interplanetarnego 2026** to nowoczesna odsłona klasycznej gry Space Travel z 1969 roku. MSKI26 działa w przeglądarce.
 
-## Ste
+## Sterowanie
+| Klawisz | Akcja
+|---------|---------------|
+| W       | Ruch do przodu|
+| S       | Wsteczny|
+| E/Q     | Skala|
+| A       | Obrót w lewo|
+| D       | Obrót w prawo|
+| 1       | Zakończ grę|
+| 2       | Odródź się|
+
+## Gra
+
+Gra sama w sobie jest bardzo, bardzo trudna. Dla kogoś, kto nigdy nie zrozumiał grawitacji, zalecamy natychmiastowe naciśnięcie kombinacji Alt-F4/Cmd-F4.
+
+## Fabuła
+...a raczej jej brak.
+
+Pojawiamy się na Ziemi. Dostajemy zlecenie, żeby przewieść np. zapasy lukrecji z naszej planety np. do Saturna, czy Jowisza. Gra obsługuje 32 ciała niebieskie, jednak na tylko kilku dostępne są bazy, do których dostarczamy/zabieramy różne niebezpieczne ładunki.
+
+Lecimy zatem z Ziemi do Jowisza. Lądujemy ostrożnie, bardzo ostrożnie, żeby się nie rozwalić koncertowo. Jeżeli wylądowaliśmy na Jowiszu (tak... na Jowiszu w MSKI26 można lądować), pojawi się nam zlecenie, a jeżeli nie, próbujemy podchodzić do manewru lądowania.
+
+Zlecenie może kazać nam polecieć z ładunkiem (np. paliwem nuklearnym) na Ziemię lub Księżyc. W grze została zaimplementowana bardzo realistyczna mechanika grawitacji ciał niebieskich, np. Księżyć przyciąga nas bardzo słabo, z kolei Ziemia przyciąga nas z naturalną siłą grawitacji (dokładniej $9,62\text{ m/s}^2$).
+
+
+
 <!--
+
+
 This is a C port of Ken Thompson's
 [Space Travel](https://en.wikipedia.org/wiki/Space_Travel_\(video_game\)),
 ported from PDP-7 assembly. The original source files are in `src/cmd/st*.s`
@@ -57,8 +92,11 @@ You can also use the arrow keys for yaw and scale.
 > *[Space Travel: Exploring the solar system and the
 > PDP-7](https://www.bell-labs.com/usr/dmr/www/spacetravel.html) by Dennis
 > Ritchie*
--->
+
+
+
 The current dominating attractor, scale, and landing status (L/CL for
 landed/crash landed) are displayed at the bottom. The moving dot on the line
 below the main view represents the horizontal velocity relative to the current
 dominating attractor.
+-->
