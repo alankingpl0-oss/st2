@@ -16,35 +16,35 @@ const char *names[] = {
 	"Slonce", /* 0 */
 	"Ziemia", /* 1 */
 	"ariel",  /* 2 */
-	"Kalisto", /*3*/
-	"Ksiezyc", /* 4 *
+	"Kalisto", /* 3 */
+	"Ksiezyc", /* 4 */
 	"deimos", /* 5 */
-	"dione",  //6
-	"enceladus", //7
-	"Europa", //8
-	"ganymede", //9
-	"hyperion", //10
-	"iapetus", //11
-	"io", //12
-	"jupiter", //13
-	"mars", //14
-	"mercury", //15
+	"dione",  // 6
+	"enceladus", // 7
+	"Europa", // 8
+	"ganymede", // 9
+	"hyperion", // 10
+	"iapetus", // 11
+	"io", // 12
+	"jupiter", // 13
+	"mars", // 14
+	"mercury", // 15
 	"mimas",
 	"miranda",
 	"neptune",
 	"nereid",
-	"oberon", //20
+	"oberon", // 20
 	"phobos",
 	"phoebe",
 	"pluto",
 	"rhea",
-	"saturn", //25
+	"saturn", // 25
 	"tethys",
 	"titan",
 	"triton",
 	"umbriel",
-	"Uran",  //30
-	"Wenus"  //31
+	"Uran",  // 30
+	"Wenus"  // 31
 };
 
 enum bri { br0, br1, br2, br3 };
