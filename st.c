@@ -302,6 +302,10 @@ struct Mission {
 struct Mission current_mission = {0};
 int player_credits = 0;    /* Punkty/kredyty za wykonane zadania */
 
+/* Historia losowań zapobiegająca powtórzeniom */
+int last_target_planet = -1;
+int last_cargo_index = -1;
+
 
 double flt2float(struct flt flt)
 {
@@ -377,26 +381,75 @@ SDL_Renderer *renderer = NULL;
 #define min(a,b) ((a) < (b) ? (a) : (b))
 
 /* Funkcja generująca nowe losowe zlecenie */
-/* Funkcja generująca nowe losowe zlecenie z wykluczeniem słońca i małych księżyców */
+/* Funkcja generująca nowe losowe zlecenie z wykluczeniem słońca i małych księżyców
+
+/* Funkcja generująca nowe losowe zlecenie z inteligentnym filtrem powtórzeń */
 void generate_random_mission(int current_planet) {
     static const char *cargo_types[] = {
-   /*     "Niebezpieczny ladunek",
-        "Tajna technologia",
-        "Zapasy lukrecji", */ /* Coś dla smaku */
+        "Paliwo nuklearne",
+        "Jablka",
+        "Cukierki!",
+        "Gruszki",
+        "Smieci",
+        "Pingwiny",
+        "Pokarm dla pingwinow",
+        "Ryby",
+        "Ropa naftowa",
+        "Agregaty",
+        "Benzyna",
+        "Budulec",
+        "Sprzet",
+        "Zlom"
+    };
+    const int num_cargo = 14; /* Łączna liczba dostępnych towarów */
+
+    /* Indeksy bezpiecznych ciał z tablicy names[]: 
+       1 - Ziemia, 4 - Ksiezyc, 13 - jupiter, 14 - mars, 15 - mercury, 
+       18 - neptune, 23 - pluto, 25 - saturn, 30 - Uran, 31 - Wenus */
+    static const int valid_planets[] = {1, 4, 13, 14, 15, 18, 23, 25, 30, 31};
+    const int num_valid = 10; /* POPRAWKA: Teraz uwzględniamy wszystkie 10 planet z listy! */
+
+    current_mission.from_planet = current_planet;
+    
+    /* 1. Inteligentne losowanie planety docelowej (inna niż obecna i inna niż poprzednia) */
+    int random_index;
+    do {
+        random_index = rand() % num_valid;
+        current_mission.to_planet = valid_planets[random_index];
+    } while (current_mission.to_planet == current_mission.from_planet || current_mission.to_planet == last_target_planet);
+    
+    /* Zapisujemy do historii, żeby nie wylosować tego samego celu w kolejnym zleceniu */
+    last_target_planet = current_mission.to_planet;
+
+    /* 2. Inteligentne losowanie towaru (żeby nie było gruszki 5 razy z rzędu) */
+    int cargo_idx;
+    do {
+        cargo_idx = rand() % num_cargo; /* POPRAWKA: Losujemy z pełnej puli 14 towarów */
+    } while (cargo_idx == last_cargo_index);
+    
+    /* Zapisujemy do historii towarów */
+    last_cargo_index = cargo_idx;
+
+    current_mission.cargo = cargo_types[cargo_idx];
+    current_mission.is_active = true;
+    current_mission.is_completed = false;
+}
+ //       "Tajna technologia",
+ //       "Zapasy lukrecji", */ /* Coś dla smaku */
         "Paliwo nuklearne", /* Żeby nikt o tym nie oslyszał... */
-        "Jablka",          /* Pyszności z Ziemi */
-        "Cukierki!",       /* Słodycze... */
-        "Gruszki",         /* Może rosną na Jowiszu?? */
-        "Smieci",          /* Eh... */
-        "Pingwiny",        /* Zaraz... co?! */
-        "Pokarm dla pingwinow", /* Trzeba je czyms karmic */
-        "Ryby",            /* Czyli naturalny pokarm dla pingów */
-        "Ropa naftowa",    /* Dla agregatów */
-        "Agregaty",        /* Mamy paliwo, to teraz mamy agregaty!! */
-        "Benzyna",         /* Dla agregatów-benzyniaków */
-        "Budulec",         /* Do bazy */
-        "Sprzet",          /* Jakis sprzet */
-        "Zlom"             /* Tak jak smieci */
+  //      "Jablka",          /* Pyszności z Ziemi */
+ //       "Cukierki!",       /* Słodycze... */
+ //       "Gruszki",         /* Może rosną na Jowiszu?? */
+ //       "Smieci",          /* Eh... */
+ //       "Pingwiny",        /* Zaraz... co?! */
+ //       "Pokarm dla pingwinow", /* Trzeba je czyms karmic */
+ //       "Ryby",            /* Czyli naturalny pokarm dla pingów */
+ //       "Ropa naftowa",    /* Dla agregatów */
+ //       "Agregaty",        /* Mamy paliwo, to teraz mamy agregaty!! */
+ //       "Benzyna",         /* Dla agregatów-benzyniaków */
+ //       "Budulec",         /* Do bazy */
+ //       "Sprzet",          /* Jakis sprzet */
+ //       "Zlom"             /* Tak jak smieci */
     };
     
 
