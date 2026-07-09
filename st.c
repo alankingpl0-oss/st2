@@ -7,7 +7,7 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
-#define ST_VERSION_STR "0.02a"
+#define ST_VERSION_STR "0.03"
 
 
 #include "font.h"
